@@ -1,9 +1,13 @@
 #!/bin/sed -nf
-#r sokoban.sed - 2002-03-15 aurélio marinho jargas <aurelio@verde666.org>
-#r -----------
+#r sokoban.sed - aurélio marinho jargas <aurelio@verde666.org>
+#r
 #r motivated by reading the amazing Adventure (Colossal Cave) history
 #r      <http://www.rickadams.org/adventure/a_history.html>
 #r GPL levels took from Mike Sharpe's sokoban.vim <http://vim.sourceforge.net>
+#r
+#r IMPORTANT
+#r this script has terminal control chars, so you must DOWNLOAD this
+#r file. just copy/paste or printing it to a file (lynx) will NOT work.
 #r
 #r THE GAME
 #r you know sokoban. everybody knows sokoban.
@@ -26,6 +30,12 @@
 #r @ you
 #r ! you over a box place
 #r 
+#r COMMANDS
+#r :q   quit
+#r :r   restart level
+#r :z   refresh screen
+#r :gN  go to level N
+#r
 #r RUNNING
 #r prompt$ ./sokoban.sed<enter>
 #r <enter>
@@ -45,30 +55,47 @@
 #r - these #r comments is because vim syntax doesn't handle sed
 #r   comments very well
 #r - if your sed is not on /bin, edit the first line of this script
+#r - Solaris sed or other versions which requires b command to be the
+#r   last on the line, must do a sed '/bx;}/{G;s/bx;}\(\n\)/bx\1}/;}'
+#r   on this file to break the line after the 'bx'
 #r
 #r and always remember, it's cool because it's SED. if you don't like it
 #r you can try xsokoban instead <http://www.cs.cornell.edu/andru/xsokoban.html>
+#r
+#r CHANGES
+#r 20020315 v0.0 debut release
+#r 2002032? v0.1 clear screen, download note, fancy victory, sound ^G, lvl0
+#r               fixed * on map bug, added :g, :r and :z commands
+#r               pseudo-functions (now it's faster!)
 
-#r TODO :n, :p, :r commands (next/prev/restart)
 
+#r skip functions
+b zero
 
-
-#r quit command
-/^:q/q
-
-#r welcome message
-1{ i\
+#r function welcome
+:welcome
+i\
        Welcome to the SED Sokoban\
 \
 Please select a level to begin [1-90]:
 d
+
+#r function loadmap
+:loadmap
+
+#r clear screen
+i\
+[2J
+
+  /^0$/{s/.*/\
+SED Sokoban - LEVEL 0 (victory test)\
+\
+     %%%%%            \
+     %@o.%            \
+     %%%%%            \
+/; b endmap
 }
-
-#r loading map
-2{
-
-#r --------------------
-  /^1$/s/.*/\
+  /^1$/{s/.*/\
 SED Sokoban - LEVEL 1\
 \
      %%%%%            \
@@ -82,15 +109,9 @@ SED Sokoban - LEVEL 1\
  %%%%% %%% %@%%  ..%  \
      %     %%%%%%%%%  \
      %%%%%%%          \
-\
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^2$/s/.*/\
+/; b endmap
+}
+  /^2$/{s/.*/\
 SED Sokoban - LEVEL 2\
 \
  %%%%%%%%%%%%         \
@@ -103,16 +124,9 @@ SED Sokoban - LEVEL 2\
    % o  o o o %       \
    %    %     %       \
    %%%%%%%%%%%%       \
-\
-\
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^3$/s/.*/\
+/; b endmap
+}
+  /^3$/{s/.*/\
 SED Sokoban - LEVEL 3\
 \
          %%%%%%%%     \
@@ -125,16 +139,9 @@ SED Sokoban - LEVEL 3\
  %%...    o  o   %    \
  %....  %%%%%%%%%%    \
  %%%%%%%%             \
-\
-\
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^4$/s/.*/\
+/; b endmap
+}
+  /^4$/{s/.*/\
 SED Sokoban - LEVEL 4\
 \
             %%%%%%%%  \
@@ -151,12 +158,9 @@ SED Sokoban - LEVEL 4\
  %  oo%oo  @%         \
  %    %    %%         \
  %%%%%%%%%%%          \
-\
-\
-\
-/
-#r --------------------
-  /^5$/s/.*/\
+/; b endmap
+}
+  /^5$/{s/.*/\
 SED Sokoban - LEVEL 5\
 \
          %%%%%        \
@@ -172,13 +176,9 @@ SED Sokoban - LEVEL 5\
          %%% %% %     \
            %    %     \
            %%%%%%     \
-\
-\
-\
-\
-/
-#r --------------------
-  /^6$/s/.*/\
+/; b endmap
+}
+  /^6$/{s/.*/\
 SED Sokoban - LEVEL 6\
 \
  %%%%%%  %%%          \
@@ -192,15 +192,9 @@ SED Sokoban - LEVEL 6\
     % o  o  %         \
     %  %%   %         \
     %%%%%%%%%         \
-\
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^7$/s/.*/\
+/; b endmap
+}
+  /^7$/{s/.*/\
 SED Sokoban - LEVEL 7\
 \
         %%%%%         \
@@ -215,14 +209,9 @@ SED Sokoban - LEVEL 7\
  % oo % %...%         \
  %  %%% %%%%%         \
  %%%%                 \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^8$/s/.*/\
+/; b endmap
+}
+  /^8$/{s/.*/\
 SED Sokoban - LEVEL 8\
 \
    %%%%               \
@@ -241,10 +230,9 @@ SED Sokoban - LEVEL 8\
    %......%           \
    %......%           \
    %%%%%%%%           \
-\
-/
-#r --------------------
-  /^9$/s/.*/\
+/; b endmap
+}
+  /^9$/{s/.*/\
 SED Sokoban - LEVEL 9\
 \
            %%%%%%%    \
@@ -261,12 +249,9 @@ SED Sokoban - LEVEL 9\
  %%%%%% oo o %%%%%    \
       %      %        \
       %%%%%%%%        \
-\
-\
-\
-/
-#r --------------------
-  /^10$/s/.*/\
+/; b endmap
+}
+  /^10$/{s/.*/\
 SED Sokoban - LEVEL 10\
 \
   %%%  %%%%%%%%%%%%%  \
@@ -285,10 +270,9 @@ SED Sokoban - LEVEL 10\
      % %%%%%%%%% %.%  \
      %           %.%  \
      %%%%%%%%%%%%%%%  \
-\
-/
-#r --------------------
-  /^11$/s/.*/\
+/; b endmap
+}
+  /^11$/{s/.*/\
 SED Sokoban - LEVEL 11\
 \
            %%%%       \
@@ -306,11 +290,9 @@ SED Sokoban - LEVEL 11\
  %...%.%              \
  %.....%              \
  %%%%%%%              \
-\
-\
-/
-#r --------------------
-  /^12$/s/.*/\
+/; b endmap
+}
+  /^12$/{s/.*/\
 SED Sokoban - LEVEL 12\
 \
  %%%%%%%%%%%%%%%%     \
@@ -326,13 +308,9 @@ SED Sokoban - LEVEL 12\
      %%%%%     %%%    \
          %     %      \
          %%%%%%%      \
-\
-\
-\
-\
-/
-#r --------------------
-  /^13$/s/.*/\
+/; b endmap
+}
+  /^13$/{s/.*/\
 SED Sokoban - LEVEL 13\
 \
     %%%%%%%%%         \
@@ -348,13 +326,9 @@ SED Sokoban - LEVEL 13\
   %o %%%%%%    %%  %  \
   %  %    %%%%%%%%%%  \
   %%%%                \
-\
-\
-\
-\
-/
-#r --------------------
-  /^14$/s/.*/\
+/; b endmap
+}
+  /^14$/{s/.*/\
 SED Sokoban - LEVEL 14\
 \
         %%%%%%%       \
@@ -373,10 +347,9 @@ SED Sokoban - LEVEL 14\
        %     %   %    \
        %%%%%%%%  %    \
               %%%%    \
-\
-/
-#r --------------------
-  /^15$/s/.*/\
+/; b endmap
+}
+  /^15$/{s/.*/\
 SED Sokoban - LEVEL 15\
 \
     %%%%%%%%          \
@@ -388,17 +361,16 @@ SED Sokoban - LEVEL 15\
   %  %      o %%%%    \
   %% %%%%o%%     %    \
   % o%.....% %   %    \
-  %  o..**. o% %%%    \
+  %  o..OO. o% %%%    \
  %%  %.....%   %      \
  %   %%% %%%%%%%      \
  % oo  %  %           \
  %  %     %           \
  %%%%%%   %           \
       %%%%%           \
-\
-/
-#r --------------------
-  /^16$/s/.*/\
+/; b endmap
+}
+  /^16$/{s/.*/\
 SED Sokoban - LEVEL 16\
 \
  %%%%%                \
@@ -411,16 +383,14 @@ SED Sokoban - LEVEL 16\
   % o  %% %% .%       \
   %  %o%%o  %.%       \
   %%%   o..%%.%       \
-   %    %.*...%       \
+   %    %.O...%       \
    % oo %.....%       \
    %  %%%%%%%%%       \
    %  %               \
    %%%%               \
-\
-\
-/
-#r --------------------
-  /^17$/s/.*/\
+/; b endmap
+}
+  /^17$/{s/.*/\
 SED Sokoban - LEVEL 17\
 \
     %%%%%%%%%%        \
@@ -437,12 +407,9 @@ SED Sokoban - LEVEL 17\
  %%%% %% %%%%%%%      \
     %    %            \
     %%%%%%            \
-\
-\
-\
-/
-#r --------------------
-  /^18$/s/.*/\
+/; b endmap
+}
+  /^18$/{s/.*/\
 SED Sokoban - LEVEL 18\
 \
       %%%%%%%%%%%     \
@@ -458,13 +425,9 @@ SED Sokoban - LEVEL 18\
    %               %  \
    %  %%%%%%%%%%%  %  \
    %%%%         %%%%  \
-\
-\
-\
-\
-/
-#r --------------------
-  /^19$/s/.*/\
+/; b endmap
+}
+  /^19$/{s/.*/\
 SED Sokoban - LEVEL 19\
 \
    %%%%%%             \
@@ -483,10 +446,9 @@ SED Sokoban - LEVEL 19\
  %%%%o  o% o   ....%  \
  %       %  %% ....%  \
  %%%%%%%%%%%%%%%%%%%  \
-\
-/
-#r --------------------
-  /^20$/s/.*/\
+/; b endmap
+}
+  /^20$/{s/.*/\
 SED Sokoban - LEVEL 20\
 \
      %%%%%%%%%%       \
@@ -505,10 +467,9 @@ SED Sokoban - LEVEL 20\
     %    oo %%%....%  \
     %      %% %%%%%%  \
     %%%%%%%%          \
-\
-/
-#r --------------------
-  /^21$/s/.*/\
+/; b endmap
+}
+  /^21$/{s/.*/\
 SED Sokoban - LEVEL 21\
 \
  %%%%%%%%%            \
@@ -526,11 +487,9 @@ SED Sokoban - LEVEL 21\
   %%%%% o  %...%      \
       %%   %%%%%      \
        %%%%%          \
-\
-\
-/
-#r --------------------
-  /^22$/s/.*/\
+/; b endmap
+}
+  /^22$/{s/.*/\
 SED Sokoban - LEVEL 22\
 \
  %%%%%%     %%%%      \
@@ -549,10 +508,9 @@ SED Sokoban - LEVEL 22\
  %% %%%%%% o %%%%% %  \
  %         %       %  \
  %%%%%%%%%%%%%%%%%%%  \
-\
-/
-#r --------------------
-  /^23$/s/.*/\
+/; b endmap
+}
+  /^23$/{s/.*/\
 SED Sokoban - LEVEL 23\
 \
      %%%%%%%          \
@@ -569,12 +527,9 @@ SED Sokoban - LEVEL 23\
  %.. %  %  %   %   %  \
  %%. %%%%  %%%%%   %  \
   %%%%  %%%%   %%%%%  \
-\
-\
-\
-/
-#r --------------------
-  /^24$/s/.*/\
+/; b endmap
+}
+  /^24$/{s/.*/\
 SED Sokoban - LEVEL 24\
 \
  %%%%%%%%%%%%%%%      \
@@ -593,10 +548,9 @@ SED Sokoban - LEVEL 24\
   %  %  o      %%%%%  \
   % @%%  %  %  %      \
   %%%%%%%%%%%%%%      \
-\
-/
-#r --------------------
-  /^25$/s/.*/\
+/; b endmap
+}
+  /^25$/{s/.*/\
 SED Sokoban - LEVEL 25\
 \
  %%%%                 \
@@ -615,10 +569,9 @@ SED Sokoban - LEVEL 25\
  % %%%%%%o%%%%%% o %  \
  %        %    %   %  \
  %%%%%%%%%%    %%%%%  \
-\
-/
-#r --------------------
-  /^26$/s/.*/\
+/; b endmap
+}
+  /^26$/{s/.*/\
 SED Sokoban - LEVEL 26\
 \
   %%%%%%%             \
@@ -633,14 +586,9 @@ SED Sokoban - LEVEL 26\
   %%%%%%  %%oo@%      \
        %      %%      \
        %%%%%%%%       \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^27$/s/.*/\
+/; b endmap
+}
+  /^27$/{s/.*/\
 SED Sokoban - LEVEL 27\
 \
   %%%%%%%%%%%%%%%%%   \
@@ -656,13 +604,9 @@ SED Sokoban - LEVEL 27\
   % o    o%%o %%%%%%  \
   %%%%%%%  @ %%       \
         %%%%%%        \
-\
-\
-\
-\
-/
-#r --------------------
-  /^28$/s/.*/\
+/; b endmap
+}
+  /^28$/{s/.*/\
 SED Sokoban - LEVEL 28\
 \
           %%%%%       \
@@ -680,11 +624,9 @@ SED Sokoban - LEVEL 28\
      %   o o  %%%%    \
      %%%%%%   %       \
           %%%%%       \
-\
-\
-/
-#r --------------------
-  /^29$/s/.*/\
+/; b endmap
+}
+  /^29$/{s/.*/\
 SED Sokoban - LEVEL 29\
 \
  %%%%%                \
@@ -694,19 +636,15 @@ SED Sokoban - LEVEL 29\
  %% %   o%o%@  %   %  \
  %  %      o %   o %  \
  %  %%% %%%%%%%%% %%  \
- %  %% ..*..... % %%  \
- %% %% *.*..*.* % %%  \
+ %  %% ..O..... % %%  \
+ %% %% O.O..O.O % %%  \
  % o%%%%%%%%%% %%o %  \
  %  o   o  o    o  %  \
  %  %   %   %   %  %  \
  %%%%%%%%%%%%%%%%%%%  \
-\
-\
-\
-\
-/
-#r --------------------
-  /^30$/s/.*/\
+/; b endmap
+}
+  /^30$/{s/.*/\
 SED Sokoban - LEVEL 30\
 \
         %%%%%%%%%%%   \
@@ -723,12 +661,9 @@ SED Sokoban - LEVEL 30\
  %  %% o %  %%.... %  \
  %%%%%   %%%%%%...%%  \
      %%%%%    %%%%%   \
-\
-\
-\
-/
-#r --------------------
-  /^31$/s/.*/\
+/; b endmap
+}
+  /^31$/{s/.*/\
 SED Sokoban - LEVEL 31\
 \
    %%%%               \
@@ -747,10 +682,9 @@ SED Sokoban - LEVEL 31\
     %...%%            \
     %...%             \
     %%%%%             \
-\
-/
-#r --------------------
-  /^32$/s/.*/\
+/; b endmap
+}
+  /^32$/{s/.*/\
 SED Sokoban - LEVEL 32\
 \
        %%%%           \
@@ -768,11 +702,9 @@ SED Sokoban - LEVEL 32\
        %o %%%         \
        %  %           \
        %%%%           \
-\
-\
-/
-#r --------------------
-  /^33$/s/.*/\
+/; b endmap
+}
+  /^33$/{s/.*/\
 SED Sokoban - LEVEL 33\
 \
   %%%%%%%%%%%         \
@@ -790,11 +722,9 @@ SED Sokoban - LEVEL 33\
  %%....%  o %         \
   %%..%%    %         \
    %%%%%%%%%%         \
-\
-\
-/
-#r --------------------
-  /^34$/s/.*/\
+/; b endmap
+}
+  /^34$/{s/.*/\
 SED Sokoban - LEVEL 34\
 \
   %%%%%%%%%           \
@@ -812,11 +742,9 @@ SED Sokoban - LEVEL 34\
   %%%o o   %%%        \
     %  %%%%%          \
     %%%%              \
-\
-\
-/
-#r --------------------
-  /^35$/s/.*/\
+/; b endmap
+}
+  /^35$/{s/.*/\
 SED Sokoban - LEVEL 35\
 \
  %%%%%%%%%%%% %%%%%%  \
@@ -835,10 +763,9 @@ SED Sokoban - LEVEL 35\
  %% %% %%% o  %       \
   %    % %    %       \
   %%%%%% %%%%%%       \
-\
-/
-#r --------------------
-  /^36$/s/.*/\
+/; b endmap
+}
+  /^36$/{s/.*/\
 SED Sokoban - LEVEL 36\
 \
              %%%%%    \
@@ -857,10 +784,9 @@ SED Sokoban - LEVEL 36\
      %.........%      \
      %.........%      \
      %%%%%%%%%%%      \
-\
-/
-#r --------------------
-  /^37$/s/.*/\
+/; b endmap
+}
+  /^37$/{s/.*/\
 SED Sokoban - LEVEL 37\
 \
  %%%%%%%%%%%          \
@@ -878,11 +804,9 @@ SED Sokoban - LEVEL 37\
     %%   % %   %      \
      %%%%%@%%%%%      \
          %%%          \
-\
-\
-/
-#r --------------------
-  /^38$/s/.*/\
+/; b endmap
+}
+  /^38$/{s/.*/\
 SED Sokoban - LEVEL 38\
 \
        %%%%           \
@@ -896,15 +820,9 @@ SED Sokoban - LEVEL 38\
   %o  o    %          \
   %  %%%%%%%          \
   %%%%                \
-\
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^39$/s/.*/\
+/; b endmap
+}
+  /^39$/{s/.*/\
 SED Sokoban - LEVEL 39\
 \
               %%%%%%  \
@@ -923,10 +841,9 @@ SED Sokoban - LEVEL 39\
  %    %  oo %         \
  %%%%%%   %%%         \
       %%%%%           \
-\
-/
-#r --------------------
-  /^40$/s/.*/\
+/; b endmap
+}
+  /^40$/{s/.*/\
 SED Sokoban - LEVEL 40\
 \
      %%%%%%%%%%%%     \
@@ -945,10 +862,9 @@ SED Sokoban - LEVEL 40\
  %....   %            \
  %....   %            \
  %%%%%%%%%            \
-\
-/
-#r --------------------
-  /^41$/s/.*/\
+/; b endmap
+}
+  /^41$/{s/.*/\
 SED Sokoban - LEVEL 41\
 \
             %%%%%     \
@@ -966,11 +882,9 @@ SED Sokoban - LEVEL 41\
  %%%%%%%%%%%%%%  o %  \
               %%  %%  \
                %%%%   \
-\
-\
-/
-#r --------------------
-  /^42$/s/.*/\
+/; b endmap
+}
+  /^42$/{s/.*/\
 SED Sokoban - LEVEL 42\
 \
       %%%%%%%%        \
@@ -986,13 +900,9 @@ SED Sokoban - LEVEL 42\
    %  o  o  o  o %    \
    %%%%%%   %%%%%%    \
         %%%%%         \
-\
-\
-\
-\
-/
-#r --------------------
-  /^43$/s/.*/\
+/; b endmap
+}
+  /^43$/{s/.*/\
 SED Sokoban - LEVEL 43\
 \
          %%%%%%%      \
@@ -1006,15 +916,9 @@ SED Sokoban - LEVEL 43\
  %...%  %%%  o  o  %  \
  %%%%%%%% %%   %   %  \
            %%%%%%%%%  \
-\
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^44$/s/.*/\
+/; b endmap
+}
+  /^44$/{s/.*/\
 SED Sokoban - LEVEL 44\
 \
   %%%%%               \
@@ -1032,11 +936,9 @@ SED Sokoban - LEVEL 44\
            % %%% % %  \
            %       %  \
            %%%%%%%%%  \
-\
-\
-/
-#r --------------------
-  /^45$/s/.*/\
+/; b endmap
+}
+  /^45$/{s/.*/\
 SED Sokoban - LEVEL 45\
 \
  %%%%% %%%%           \
@@ -1053,12 +955,9 @@ SED Sokoban - LEVEL 45\
  %  %%%%%%  %%%       \
  % %%    %%%%         \
  %%%                  \
-\
-\
-\
-/
-#r --------------------
-  /^46$/s/.*/\
+/; b endmap
+}
+  /^46$/{s/.*/\
 SED Sokoban - LEVEL 46\
 \
  %%%%%%%%%%           \
@@ -1077,10 +976,9 @@ SED Sokoban - LEVEL 46\
    %.......%%%        \
    %.......%          \
    %%%%%%%%%          \
-\
-/
-#r --------------------
-  /^47$/s/.*/\
+/; b endmap
+}
+  /^47$/{s/.*/\
 SED Sokoban - LEVEL 47\
 \
           %%%%        \
@@ -1094,23 +992,17 @@ SED Sokoban - LEVEL 47\
  %%%o       %%%%%%%   \
    %  %%%%%%%         \
    %%%%               \
-\
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^48$/s/.*/\
+/; b endmap
+}
+  /^48$/{s/.*/\
 SED Sokoban - LEVEL 48\
 \
    %%%%%%%%%          \
-   %*.*%*.*%          \
-   %.*.*.*.%          \
-   %*.*.*.*%          \
-   %.*.*.*.%          \
-   %*.*.*.*%          \
+   %O.O%O.O%          \
+   %.O.O.O.%          \
+   %O.O.O.O%          \
+   %.O.O.O.%          \
+   %O.O.O.O%          \
    %%%   %%%          \
      %   %            \
  %%%%%% %%%%%%        \
@@ -1121,10 +1013,9 @@ SED Sokoban - LEVEL 48\
   %   o@o   %         \
   %  %%%%%  %         \
   %%%%   %%%%         \
-\
-/
-#r --------------------
-  /^49$/s/.*/\
+/; b endmap
+}
+  /^49$/{s/.*/\
 SED Sokoban - LEVEL 49\
 \
         %%%%          \
@@ -1136,24 +1027,22 @@ SED Sokoban - LEVEL 49\
  %%%  % %%%%%  %      \
  %    % %....o %      \
  % %   o ....% %      \
- %  o % %.*..% %      \
+ %  o % %.O..% %      \
  %%%  %%%% %%% %      \
    %%%% @o  %%o%%     \
       %%% o     %     \
         %  %%   %     \
         %%%%%%%%%     \
-\
-\
-/
-#r --------------------
-  /^50$/s/.*/\
+/; b endmap
+}
+  /^50$/{s/.*/\
 SED Sokoban - LEVEL 50\
 \
        %%%%%%%%%%%%   \
       %%..    %   %   \
-     %%..* o    o %   \
-    %%..*.% % % o%%   \
-    %..*.% % % o  %   \
+     %%..O o    o %   \
+    %%..O.% % % o%%   \
+    %..O.% % % o  %   \
  %%%%...%  %    % %   \
  %  %% %          %   \
  % @o o %%%  %   %%   \
@@ -1165,10 +1054,9 @@ SED Sokoban - LEVEL 50\
    %  %%%   %%     %  \
    %  %      %    %%  \
    %%%%      %%%%%%   \
-\
-/
-#r --------------------
-  /^51$/s/.*/\
+/; b endmap
+}
+  /^51$/{s/.*/\
 SED Sokoban - LEVEL 51\
 \
   %%%%%%%%%           \
@@ -1183,14 +1071,9 @@ SED Sokoban - LEVEL 51\
  %..%%%o%%% %@%       \
  %..% %     %%%       \
  %%%% %%%%%%%         \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^52$/s/.*/\
+/; b endmap
+}
+  /^52$/{s/.*/\
 SED Sokoban - LEVEL 52\
 \
             %%%%%%%%  \
@@ -1210,9 +1093,9 @@ SED Sokoban - LEVEL 52\
   % o          %      \
   %  %%%%%%%%%%%      \
   %%%%                \
-/
-#r --------------------
-  /^53$/s/.*/\
+/; b endmap
+}
+  /^53$/{s/.*/\
 SED Sokoban - LEVEL 53\
 \
  %%%%%%%%%%%%%%%%%%   \
@@ -1227,14 +1110,9 @@ SED Sokoban - LEVEL 53\
  %%..  o%  %%   %%@ % \
   %%.%              % \
    %%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^54$/s/.*/\
+/; b endmap
+}
+  /^54$/{s/.*/\
 SED Sokoban - LEVEL 54\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1249,14 +1127,9 @@ SED Sokoban - LEVEL 54\
  %   o  o     %  %  % \
  %   %    %   %     % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^55$/s/.*/\
+/; b endmap
+}
+  /^55$/{s/.*/\
 SED Sokoban - LEVEL 55\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1271,14 +1144,9 @@ SED Sokoban - LEVEL 55\
  %%%% o  o% % % % o % \
  %%%%         % %  %% \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^56$/s/.*/\
+/; b endmap
+}
+  /^56$/{s/.*/\
 SED Sokoban - LEVEL 56\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1293,14 +1161,9 @@ SED Sokoban - LEVEL 56\
  %  % o        %%%%%% \
  %      % %    %%%%%% \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^57$/s/.*/\
+/; b endmap
+}
+  /^57$/{s/.*/\
 SED Sokoban - LEVEL 57\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1315,14 +1178,9 @@ SED Sokoban - LEVEL 57\
  %%%%%  %  o    o o % \
  %%%%%  %  %  %  %  % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^58$/s/.*/\
+/; b endmap
+}
+  /^58$/{s/.*/\
 SED Sokoban - LEVEL 58\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1337,14 +1195,9 @@ SED Sokoban - LEVEL 58\
  %  %   o o %      %% \
  %    %     %  %   @% \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^59$/s/.*/\
+/; b endmap
+}
+  /^59$/{s/.*/\
 SED Sokoban - LEVEL 59\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1359,14 +1212,9 @@ SED Sokoban - LEVEL 59\
  %%%%%  o   o    o  % \
  %%%%% %    %  %   %% \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^60$/s/.*/\
+/; b endmap
+}
+  /^60$/{s/.*/\
 SED Sokoban - LEVEL 60\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1381,14 +1229,9 @@ SED Sokoban - LEVEL 60\
  %%  o  o %   %  %%%% \
  %%       %%%%%%%%%%% \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^61$/s/.*/\
+/; b endmap
+}
+  /^61$/{s/.*/\
 SED Sokoban - LEVEL 61\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1403,14 +1246,9 @@ SED Sokoban - LEVEL 61\
  % o    o %% o    o % \
  %  %  %%    %%  %  % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^62$/s/.*/\
+/; b endmap
+}
+  /^62$/{s/.*/\
 SED Sokoban - LEVEL 62\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1425,14 +1263,9 @@ SED Sokoban - LEVEL 62\
  %....%  %%%%%      % \
  %...%%%        %%  % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^63$/s/.*/\
+/; b endmap
+}
+  /^63$/{s/.*/\
 SED Sokoban - LEVEL 63\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1447,14 +1280,9 @@ SED Sokoban - LEVEL 63\
  % %%    o %% o  o  % \
  %     @%     %   % % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^64$/s/.*/\
+/; b endmap
+}
+  /^64$/{s/.*/\
 SED Sokoban - LEVEL 64\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1469,14 +1297,9 @@ SED Sokoban - LEVEL 64\
  %%   %%%  %  o  %%%% \
  %%%%%%%%  %  %     % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^65$/s/.*/\
+/; b endmap
+}
+  /^65$/{s/.*/\
 SED Sokoban - LEVEL 65\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1491,14 +1314,9 @@ SED Sokoban - LEVEL 65\
  %   o %%   %  % %  % \
  %     %    %  %    % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^66$/s/.*/\
+/; b endmap
+}
+  /^66$/{s/.*/\
 SED Sokoban - LEVEL 66\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1513,14 +1331,9 @@ SED Sokoban - LEVEL 66\
  %   o%  %       o  % \
  %  %    %    %  %  % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^67$/s/.*/\
+/; b endmap
+}
+  /^67$/{s/.*/\
 SED Sokoban - LEVEL 67\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1535,14 +1348,9 @@ SED Sokoban - LEVEL 67\
  %% o%      o o  o %% \
  %%%    %    %    %%% \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^68$/s/.*/\
+/; b endmap
+}
+  /^68$/{s/.*/\
 SED Sokoban - LEVEL 68\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1557,14 +1365,9 @@ SED Sokoban - LEVEL 68\
  %....%%   oo  o  % % \
  %.....%%        %  % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^69$/s/.*/\
+/; b endmap
+}
+  /^69$/{s/.*/\
 SED Sokoban - LEVEL 69\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1579,14 +1382,9 @@ SED Sokoban - LEVEL 69\
  % o %  o  %%       % \
  %    %    %@       % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^70$/s/.*/\
+/; b endmap
+}
+  /^70$/{s/.*/\
 SED Sokoban - LEVEL 70\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1601,14 +1399,9 @@ SED Sokoban - LEVEL 70\
  % %%%%%%%%%% %.....% \
  %            %.....% \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^71$/s/.*/\
+/; b endmap
+}
+  /^71$/{s/.*/\
 SED Sokoban - LEVEL 71\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1623,14 +1416,9 @@ SED Sokoban - LEVEL 71\
  %%% o    o%@o o%   % \
  %%%%   %       %   % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^72$/s/.*/\
+/; b endmap
+}
+  /^72$/{s/.*/\
 SED Sokoban - LEVEL 72\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1645,14 +1433,9 @@ SED Sokoban - LEVEL 72\
  %@%% o%  o  o     %% \
  %%       %%   %  %%% \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^73$/s/.*/\
+/; b endmap
+}
+  /^73$/{s/.*/\
 SED Sokoban - LEVEL 73\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1667,14 +1450,9 @@ SED Sokoban - LEVEL 73\
  %  o          %....% \
  %   %  %     %.....% \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^74$/s/.*/\
+/; b endmap
+}
+  /^74$/{s/.*/\
 SED Sokoban - LEVEL 74\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1689,14 +1467,9 @@ SED Sokoban - LEVEL 74\
  %   o%  %%%%   % o%% \
  % %  %    @%      %% \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^75$/s/.*/\
+/; b endmap
+}
+  /^75$/{s/.*/\
 SED Sokoban - LEVEL 75\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1711,14 +1484,9 @@ SED Sokoban - LEVEL 75\
  %  o         o %%% % \
  %   %   %        % % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^76$/s/.*/\
+/; b endmap
+}
+  /^76$/{s/.*/\
 SED Sokoban - LEVEL 76\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1733,14 +1501,9 @@ SED Sokoban - LEVEL 76\
  %% o  o% %  %  o   % \
  %   %%   %  %      % \
  %%%%%%%%%%%%%%%%%%%% \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^77$/s/.*/\
+/; b endmap
+}
+  /^77$/{s/.*/\
 SED Sokoban - LEVEL 77\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -1758,11 +1521,9 @@ SED Sokoban - LEVEL 77\
        %%      o %@%  \
         %  %% %%%%%%  \
         %%%%%%%       \
-\
-\
-/
-#r --------------------
-  /^78$/s/.*/\
+/; b endmap
+}
+  /^78$/{s/.*/\
 SED Sokoban - LEVEL 78\
 \
         %%%%%%%%%%%   \
@@ -1777,14 +1538,9 @@ SED Sokoban - LEVEL 78\
  %....%      % o   %  \
  %....%      %     %  \
  %%%%%%      %%%%%%%  \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^79$/s/.*/\
+/; b endmap
+}
+  /^79$/{s/.*/\
 SED Sokoban - LEVEL 79\
 \
  %%%%%%%%%%%%%        \
@@ -1799,14 +1555,9 @@ SED Sokoban - LEVEL 79\
    %      %     ...%  \
    %%%@%%%%%%%%%%%%%  \
      %%%              \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^80$/s/.*/\
+/; b endmap
+}
+  /^80$/{s/.*/\
 SED Sokoban - LEVEL 80\
 \
    %%%%%%%%%%%%%%%%%  \
@@ -1822,13 +1573,9 @@ SED Sokoban - LEVEL 80\
  %  o %    %          \
  %    %    %          \
  %%%%%%%%%%%          \
-\
-\
-\
-\
-/
-#r --------------------
-  /^81$/s/.*/\
+/; b endmap
+}
+  /^81$/{s/.*/\
 SED Sokoban - LEVEL 81\
 \
                %%%%%  \
@@ -1844,13 +1591,9 @@ SED Sokoban - LEVEL 81\
  %....        %       \
  %%%%%%%%%%%@%%       \
            %%%        \
-\
-\
-\
-\
-/
-#r --------------------
-  /^82$/s/.*/\
+/; b endmap
+}
+  /^82$/{s/.*/\
 SED Sokoban - LEVEL 82\
 \
      %%%%%%           \
@@ -1866,13 +1609,9 @@ SED Sokoban - LEVEL 82\
   %   oo  %           \
   %    %  %           \
   %%%%%%%%%           \
-\
-\
-\
-\
-/
-#r --------------------
-  /^83$/s/.*/\
+/; b endmap
+}
+  /^83$/{s/.*/\
 SED Sokoban - LEVEL 83\
 \
  %%%%%%% %%%%%%%%%    \
@@ -1888,13 +1627,9 @@ SED Sokoban - LEVEL 83\
    %..    %%%% o %    \
    %..    %  %   %    \
    %%%%%%%%  %%%%%    \
-\
-\
-\
-\
-/
-#r --------------------
-  /^84$/s/.*/\
+/; b endmap
+}
+  /^84$/{s/.*/\
 SED Sokoban - LEVEL 84\
 \
  %%%%%%%              \
@@ -1909,14 +1644,9 @@ SED Sokoban - LEVEL 84\
  %   oo      ...%     \
  %     %%@%  ...%     \
  %%%%%%%%%%%%%%%%     \
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^85$/s/.*/\
+/; b endmap
+}
+  /^85$/{s/.*/\
 SED Sokoban - LEVEL 85\
 \
  %%%%%%%%%%%%         \
@@ -1935,10 +1665,9 @@ SED Sokoban - LEVEL 85\
  % % %%%%%%% o % %  % \
  %   %     %       %% \
  %%%%%     %%%%%%%%%% \
-\
-/
-#r --------------------
-  /^86$/s/.*/\
+/; b endmap
+}
+  /^86$/{s/.*/\
 SED Sokoban - LEVEL 86\
 \
  %%%%%%%%%%%%%%%%     \
@@ -1951,16 +1680,9 @@ SED Sokoban - LEVEL 86\
  % %% %%%  %%%%%%%    \
  %    % %%%%          \
  %%%%%%               \
-\
-\
-\
-\
-\
-\
-\
-/
-#r --------------------
-  /^87$/s/.*/\
+/; b endmap
+}
+  /^87$/{s/.*/\
 SED Sokoban - LEVEL 87\
 \
      %%%%%            \
@@ -1977,12 +1699,9 @@ SED Sokoban - LEVEL 87\
  %    o     ....%     \
  %         %....%     \
  %%%%%%%%%%%%%%%%     \
-\
-\
-\
-/
-#r --------------------
-  /^88$/s/.*/\
+/; b endmap
+}
+  /^88$/{s/.*/\
 SED Sokoban - LEVEL 88\
 \
  %%%%%%%%%%%%%        \
@@ -2001,10 +1720,9 @@ SED Sokoban - LEVEL 88\
   %  % oo % %%%%%     \
   %  %    %           \
   %%%%%%%%%           \
-\
-/
-#r --------------------
-  /^89$/s/.*/\
+/; b endmap
+}
+  /^89$/{s/.*/\
 SED Sokoban - LEVEL 89\
 \
   %%%%%%%%%%%%%%%%%%  \
@@ -2024,9 +1742,9 @@ SED Sokoban - LEVEL 89\
  %%%%%%%%    %%%%%    \
         %%%  %        \
           %%%%        \
-/
-#r --------------------
-  /^90$/s/.*/\
+/; b endmap
+}
+  /^90$/{s/.*/\
 SED Sokoban - LEVEL 90\
 \
  %%%%%%%%%%%%%%%%%%%% \
@@ -2042,34 +1760,80 @@ SED Sokoban - LEVEL 90\
  %  %%%%%%%% %      % \
  %           %  %.%.% \
  %%o%%%%%%%%o%   ...% \
- %    .*  %    %%.%.% \
- % .*...*   o  .....% \
+ %    .O  %    %%.%.% \
+ % .O...O   o  .....% \
  %%%%%%%%%%%%%%%%%%%% \
                       \
-/
-
+/; b endmap
+}
 /SED Soko/!{s/.*/there is no '&' level!/p;q;}
+
+:endmap
+#r back to line 1 col 1
+s/^/[H/
+s,\(\n\)$,\1\1[ h j k l :q :r :z :gN ],
 x
+/:p /!s/.*//
+b ini
+
+
+:zero
+
+#r supporting arrow keys also
+//{
+  s/\[A/k/g
+  s/\[B/j/g
+  s/\[C/l/g
+  s/\[D/h/g
 }
 
-#r put cursor back jump terminal command on map
-3{x;s/^/[22F/;x;}
+#r command aliases
+s//:z/g
+
+#r lowercase commands
+y/HJKLQGZR/hjklqgzr/
+
+#r wipe trash
+s/[^hjklqgzr:0-9]//g
+
+#r commands!
+/^:/{
+  #r quit
+  /^:q/q
+
+  #r refresh screen
+  /^:z/{ s/.*/[2J/p; s/.*/:p [refresh]/; b ini
+  }
+  #r goto level N (optional g)
+  /^:g\?\([0-9]\+\)$/{
+    s//\1/; h; x; s/.*/:p [goto level &]/; x; b loadmap
+  }
+  #r restarting level
+  /^:r/{ s/.*/:p [restart]/; x;
+         s/.*LEVEL \([0-9]\+\).*/\1/; b loadmap
+  }
+}
+
+#r welcome message
+1 b welcome
+
+#r first map loading
+2 b loadmap
 
 
 #r here the party begins
 :ini
 
-#r refresh screen command
-/^p\|^/{x;bx;}
+#r print message
+#r TODO make it right
+/^:p /{
+  s/.*//
+#r s//last command: /; s/$/       /p; d
+}
 
-#r supporting arrow key also
-s/\[A/k/g
-s/\[B/j/g
-s/\[C/l/g
-s/\[D/h/g
 
-#r wipe trash
-s/[^kjlh]//g
+#r empty command, jump to end
+/./!{x;bx;}
 
 
 #r -------------[ LEFT ]--------------------------
@@ -2229,18 +1993,18 @@ s/[^kjlh]//g
 }
 
 #r wrong command, do nothing
-x
+s/^.// ; x
 
 
 #r ----------------[ THE END ]-----------------
 :x
 
 #r adding color codes
-#s/%/[43;33m&[m/g
 s/%/[46;36m&[m/g
 s/[!@]/[33;1m&[m/g
 s/O/[37;1m&[m/g
 s/\./[31;1m&[m/g
+
 
 #r uncomment this line if you DON'T want colorized output (why not?)
 ### s/\[[0-9;]*m//g
@@ -2252,8 +2016,16 @@ p
 s/\[[0-9;]*m//g
 
 #r no more load ('o'), level finished!
-#rTODO fanciest message,colored
-/[ @!%.]o\|o[ @!%.]/!{s/.*/(( VICTORY! ))          /p;q;}
+/[ @!%.]o\|o[ @!%.]/!{
+  s/.*/[37;01m(( [31mV[32mI[33mC[34mT/
+  s/$/[31mO[32mR[33mY[34m![37m ))[m/
+  s/$/                             /
+  #r uncomment here if you DON'T want color or sound on victory
+  #r s///g ; s/\[[0-9;]*m//g
+  p;i\
+  You're a master of this level. Try the next!
+  q
+}
 
 #r save current position on hold space
 x
