@@ -1,78 +1,68 @@
 #!/bin/sed -nf
-#r sokoban.sed - aurélio marinho jargas <aurelio@verde666.org>
-#r
-#r motivated by reading the amazing Adventure (Colossal Cave) history
-#r      <http://www.rickadams.org/adventure/a_history.html>
-#r GPL levels took from Mike Sharpe's sokoban.vim <http://vim.sourceforge.net>
-#r
-#r IMPORTANT
-#r this script has terminal control chars, so you must DOWNLOAD this
-#r file. just copy/paste or printing it to a file (lynx) will NOT work.
-#r
-#r THE GAME
-#r you know sokoban. everybody knows sokoban.
-#r right, if you don't, it's a box pushing game. you have a mess, boxes all
-#r over the room and must place them on the boxes place. to move a box
-#r you must push it. you can only push a box if it's way is clear with
-#r no wall or other box on the way (you are not that strong).
-#r
-#r MOVING AROUND
-#r h or <left-arrow>  - move left
-#r j or <down-arrow>  - move down
-#r k or <up-arrow>    - move up
-#r l or <right-arrow> - move right
-#r
-#r ACTORS
-#r % wall
-#r o box
-#r . box place
-#r O box placed right
-#r @ you
-#r ! you over a box place
-#r 
-#r COMMANDS
-#r :q   quit
-#r :r   restart level
-#r :z   refresh screen
-#r :gN  go to level N
-#r
-#r RUNNING
-#r prompt$ ./sokoban.sed<enter>
-#r <enter>
-#r 1
-#r now just move! (:q quits)
-#r
-#r DETAILS
-#r it's all written in SED, so we've got some limitations:
-#r - as a line-oriented editor, you MUST hit <ENTER> after *any* move.
-#r   yes, that sucks. but you can accumulate various movements and hit
-#r   <ENTER> just once.
-#r - when you run sokoban.sed, you must first press any key to feed SED
-#r   and then you'll see the welcome message.
-#r - the text you type in, is printed directly on the screen, so
-#r   there's no way to clear it on this sed script. screen control
-#r   chars can do it, but i'm trying to avoid them for now.
-#r - these #r comments is because vim syntax doesn't handle sed
-#r   comments very well
-#r - if your sed is not on /bin, edit the first line of this script
-#r - Solaris sed or other versions which requires b command to be the
-#r   last on the line, must do a sed '/bx;}/{G;s/bx;}\(\n\)/bx\1}/;}'
-#r   on this file to break the line after the 'bx'
-#r
-#r and always remember, it's cool because it's SED. if you don't like it
-#r you can try xsokoban instead <http://www.cs.cornell.edu/andru/xsokoban.html>
-#r
-#r CHANGES
-#r 20020315 v0.0 debut release
-#r 2002032? v0.1 clear screen, download note, fancy victory, sound ^G, lvl0
-#r               fixed * on map bug, added :g, :r and :z commands
-#r               pseudo-functions (now it's faster!)
+# sokoban.sed  <http://aurelio.net/sed/sokoban>
+#   by aurélio marinho jargas <verde (a) aurelio net>
+#
+# Motivated by reading the amazing Adventure (Colossal Cave) history
+#      <http://www.rickadams.org/adventure/a_history.html>
+# GPL levels took from Mike Sharpe's sokoban.vim <http://vim.sourceforge.net>
+#
+# IMPORTANT
+# This script has terminal control chars, so you must DOWNLOAD this
+# file. Just copy/paste or printing it to a file (lynx) will NOT work.
+#
+# THE GAME
+# You know sokoban. Everybody knows sokoban.
+# Right, if you don't, it's a box pushing game. You have a mess, boxes
+# all over the room and must place them on the boxes place. To move a
+# box you must push it. You can only push a box if the path is clear
+# with no wall or other box on the way (You are not that strong).
+#
+#   COMMANDS                       MOVING AROUND
+#     :q   quit                      h or <left-arrow>  - move left
+#     :r   restart level             j or <down-arrow>  - move down
+#     :z   refresh screen            k or <up-arrow>    - move up
+#     :gN  go to level N             l or <right-arrow> - move right
+#
+#   ACTORS
+#     o box                  % wall
+#     . box place            @ you
+#     O box placed right     ! you over a box place
+#
+#
+# RUNNING
+# prompt$ ./sokoban.sed <enter>
+# <enter>
+# 1
+# Now just move! (:q quits)
+#
+# DETAILS
+# It's all written in SED, so we've got some limitations:
+# - As a line-oriented editor, you MUST hit <ENTER> after *any* move.
+#   Yes, that sucks. But you can accumulate various movements and hit
+#   <ENTER> just once.
+# - When you run sokoban.sed, you must first press any key to feed SED
+#   and then you'll see the welcome message.
+# - If your sed is not on /bin, edit the first line of this script,
+#   or call it as: sed -nf sokoban.sed 
+# - Solaris sed or other versions which requires b command to be the
+#   last on the line, must do a sed '/bx;}/{G;s/bx;}\(\n\)/bx\1}/;}'
+#   on this file to break the line after the all the 'bx'.
+#
+# And always remember, it's cool because it's SED. If you don't like it
+# you can try xsokoban instead <http://www.cs.cornell.edu/andru/xsokoban.html>
+#
+# CHANGES
+# 20020315 v0.0 debut release
+# 20020321 v0.1 clear screen, download note, fancy victory, sound ^G, lvl0
+#               fixed * on map bug, added :g, :r and :z commands
+#               pseudo-functions (now it's faster!)
+# 20020709 v0.2 comments prefix '#r' changed to plain '#'. dummy me.
 
 
-#r skip functions
+# skip functions
 b zero
 
-#r function welcome
+# function welcome
 :welcome
 i\
        Welcome to the SED Sokoban\
@@ -80,10 +70,10 @@ i\
 Please select a level to begin [1-90]:
 d
 
-#r function loadmap
+# function loadmap
 :loadmap
 
-#r clear screen
+# clear screen
 i\
 [2J
 
@@ -1769,8 +1759,9 @@ SED Sokoban - LEVEL 90\
 /SED Soko/!{s/.*/there is no '&' level!/p;q;}
 
 :endmap
-#r back to line 1 col 1
+# back to line 1 col 1
 s/^/[H/
+# show available commands
 s,\(\n\)$,\1\1[ h j k l :q :r :z :gN ],
 x
 /:p /!s/.*//
@@ -1779,7 +1770,13 @@ b ini
 
 :zero
 
-#r supporting arrow keys also
+# welcome message
+1 b welcome
+
+# first map loading
+2 b loadmap
+
+# supporting arrow keys also
 //{
   s/\[A/k/g
   s/\[B/j/g
@@ -1787,252 +1784,246 @@ b ini
   s/\[D/h/g
 }
 
-#r command aliases
+# command aliases
 s//:z/g
 
-#r lowercase commands
+# lowercase commands
 y/HJKLQGZR/hjklqgzr/
 
-#r wipe trash
+# wipe trash (anything that is not command)
 s/[^hjklqgzr:0-9]//g
 
-#r commands!
+# commands!
 /^:/{
-  #r quit
+  # quit
   /^:q/q
 
-  #r refresh screen
+  # refresh screen
   /^:z/{ s/.*/[2J/p; s/.*/:p [refresh]/; b ini
   }
-  #r goto level N (optional g)
+  # goto level N (optional g)
   /^:g\?\([0-9]\+\)$/{
     s//\1/; h; x; s/.*/:p [goto level &]/; x; b loadmap
   }
-  #r restarting level
+  # restarting level
   /^:r/{ s/.*/:p [restart]/; x;
          s/.*LEVEL \([0-9]\+\).*/\1/; b loadmap
   }
 }
 
-#r welcome message
-1 b welcome
 
-#r first map loading
-2 b loadmap
-
-
-#r here the party begins
+# here the party begins
 :ini
 
-#r print message
-#r TODO make it right
+# print message
+# TODO make it right
 /^:p /{
   s/.*//
-#r s//last command: /; s/$/       /p; d
+# s//last command: /; s/$/       /p; d
 }
 
-
-#r empty command, jump to end
+# empty command, jump to end
 /./!{x;bx;}
 
 
-#r -------------[ LEFT ]--------------------------
+# -------------[ LEFT ]--------------------------
 
 /^h/{
 
-#r del current move and save others
+# del current move and save others
   s///;x
 
-#r clear path
+# clear path
   / @/{s//@ /;bx;}
-#r push load
+# push load
   / o@/{s//o@ /;bx;}
 
-#r enter overdot
+# enter overdot
   /\.@/{s//! /;bx;}
-#r continue overdot
+# continue overdot
   /\.!/{s//!./;bx;}
-#r out overdot
+# out overdot
   / !/{s//@./;bx;}
 
-#r enter load overdot
+# enter load overdot
   /\.o@/{s//O@ /;bx;}
-#r enter overdot with load
+# enter overdot with load
   /\.O@/{s//O! /;bx;}
-#r continue overdot with load
+# continue overdot with load
   /\.O!/{s//O!./;bx;}
-#r out load overdot / enter overdot
+# out load overdot / enter overdot
   / O@/{s//o! /;bx;}
-#r out load overdot / continue overdot
+# out load overdot / continue overdot
   / O!/{s//o!./;bx;}
-#r out overdot with load
+# out overdot with load
   / o!/{s//o@./;bx;}
-#r out overdot with load / enter overdot
+# out overdot with load / enter overdot
   /\.o!/{s//O@./;bx;}
 
-#r can't pass
+# can't pass
   bx
 
 }
 
 
-#r -------------[ RIGHT ]-------------------------
+# -------------[ RIGHT ]-------------------------
 
 /^l/{
 
-#r del current move and save others
+# del current move and save others
   s///;x
 
-#r clear path
+# clear path
   /@ /{s// @/;bx;}
-#r push load
+# push load
   /@o /{s// @o/;bx;}
 
-#r enter overdot
+# enter overdot
   /@\./{s// !/;bx;}
-#r continue overdot
+# continue overdot
   /!\./{s//.!/;bx;}
-#r out overdot
+# out overdot
   /! /{s//.@/;bx;}
 
-#r enter load overdot
+# enter load overdot
   /@o\./{s// @O/;bx;}
-#r enter overdot with load
+# enter overdot with load
   /@O\./{s// !O/;bx;}
-#r continue overdot with load
+# continue overdot with load
   /!O\./{s//.!O/;bx;}
-#r out load overdot / enter overdot
+# out load overdot / enter overdot
   /@O /{s// !o/;bx;}
-#r out load overdot / continue overdot
+# out load overdot / continue overdot
   /!O /{s//.!o/;bx;}
-#r out overdot with load
+# out overdot with load
   /!o /{s//.@o/;bx;}
-#r out overdot with load / enter overdot
+# out overdot with load / enter overdot
   /!o\./{s//.@O/;bx;}
 
-#r can't pass
+# can't pass
   bx
 }
 
 
-#r -------------[ DOWN ]--------------------------
+# -------------[ DOWN ]--------------------------
 
 /^j/{
 
-#r del current move and save others
+# del current move and save others
   s///;x
 
-#r clear path
+# clear path
   /@\(.\{22\}\) /{s// \1@/;bx;}
-#r push load
+# push load
   /@\(.\{22\}\)o\(.\{22\}\) /{s// \1@\2o/;bx;}
 
-#r enter overdot
+# enter overdot
   /@\(.\{22\}\)\./{s// \1!/;bx;}
-#r continue overdot
+# continue overdot
   /!\(.\{22\}\)\./{s//.\1!/;bx;}
-#r out overdot
+# out overdot
   /!\(.\{22\}\) /{s//.\1@/;bx;}
 
-#r enter load overdot
+# enter load overdot
   /@\(.\{22\}\)o\(.\{22\}\)\./{s// \1@\2O/;bx;}
-#r enter overdot with load
+# enter overdot with load
   /@\(.\{22\}\)O\(.\{22\}\)\./{s// \1!\2O/;bx;}
-#r continue overdot with load
+# continue overdot with load
   /!\(.\{22\}\)O\(.\{22\}\)\./{s//.\1!\2O/;bx;}
-#r out load overdot / enter overdot
+# out load overdot / enter overdot
   /@\(.\{22\}\)O\(.\{22\}\) /{s// \1!\2o/;bx;}
-#r out load overdot / continue overdot
+# out load overdot / continue overdot
   /!\(.\{22\}\)O\(.\{22\}\) /{s//.\1!\2o/;bx;}
-#r out overdot with load
+# out overdot with load
   /!\(.\{22\}\)o\(.\{22\}\) /{s//.\1@\2o/;bx;}
-#r out overdot with load / enter overdot
+# out overdot with load / enter overdot
   /!\(.\{22\}\)o\(.\{22\}\)\./{s//.\1@\2O/;bx;}
 
-#r target not free
+# target not free
   bx
 }
 
 
-#r ---------------[ UP ]--------------------------
+# ---------------[ UP ]--------------------------
 
 /^k/{
 
-#r del current move and save others
+# del current move and save others
   s///;x
 
-#r clear path
+# clear path
   / \(.\{22\}\)@/{s//@\1 /;bx;}
-#r push load
+# push load
   / \(.\{22\}\)o\(.\{22\}\)@/{s//o\1@\2 /;bx;}
 
-#r enter overdot
+# enter overdot
   /\.\(.\{22\}\)@/{s//!\1 /;bx;}
-#r continue overdot
+# continue overdot
   /\.\(.\{22\}\)!/{s//!\1./;bx;}
-#r out overdot
+# out overdot
   / \(.\{22\}\)!/{s//@\1./;bx;}
 
-#r enter load overdot
+# enter load overdot
   /\.\(.\{22\}\)o\(.\{22\}\)@/{s//O\1@\2 /;bx;}
-#r enter overdot with load
+# enter overdot with load
   /\.\(.\{22\}\)O\(.\{22\}\)@/{s//O\1!\2 /;bx;}
-#r continue overdot with load
+# continue overdot with load
   /\.\(.\{22\}\)O\(.\{22\}\)!/{s//O\1!\2./;bx;}
-#r out load overdot / enter overdot
+# out load overdot / enter overdot
   / \(.\{22\}\)O\(.\{22\}\)@/{s//o\1!\2 /;bx;}
-#r out load overdot / continue overdot
+# out load overdot / continue overdot
   / \(.\{22\}\)O\(.\{22\}\)!/{s//o\1!\2./;bx;}
-#r out overdot with load
+# out overdot with load
   / \(.\{22\}\)o\(.\{22\}\)!/{s//o\1@\2./;bx;}
-#r out overdot with load / enter overdot
+# out overdot with load / enter overdot
   /\.\(.\{22\}\)o\(.\{22\}\)!/{s//O\1@\2./;bx;}
 
-#r target not free
+# target not free
   bx
 }
 
-#r wrong command, do nothing
+# wrong command, do nothing
 s/^.// ; x
 
 
-#r ----------------[ THE END ]-----------------
+# ----------------[ THE END ]-----------------
 :x
 
-#r adding color codes
+# adding color codes
 s/%/[46;36m&[m/g
 s/[!@]/[33;1m&[m/g
 s/O/[37;1m&[m/g
 s/\./[31;1m&[m/g
 
 
-#r uncomment this line if you DON'T want colorized output (why not?)
+# uncomment this line if you DON'T want colorized output (why not?)
 ### s/\[[0-9;]*m//g
 
-#r update screen
+# update screen
 p
 
-#r removing color codes from maze
+# removing color codes from maze
 s/\[[0-9;]*m//g
 
-#r no more load ('o'), level finished!
+# no more messy boxes ('o'), level finished!
 /[ @!%.]o\|o[ @!%.]/!{
   s/.*/[37;01m(( [31mV[32mI[33mC[34mT/
   s/$/[31mO[32mR[33mY[34m![37m ))[m/
-  s/$/                             /
-  #r uncomment here if you DON'T want color or sound on victory
-  #r s///g ; s/\[[0-9;]*m//g
+  s/$/                                                   /
+  # uncomment here if you DON'T want color or sound on victory
+  # s///g ; s/\[[0-9;]*m//g
   p;i\
   You're a master of this level. Try the next!
   q
 }
 
-#r save current position on hold space
+# save current position on hold space
 x
 
-#r skipping loop
+# skipping loop
 2d
 
-#r nice loop for accumulated moves
+# nice loop for accumulated moves
 /./{p;bini;}
 
+# The End ;(
